@@ -1,0 +1,33 @@
+{
+  "name": "serious-beatmap-converter",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "SeriousBeatmapConverter —— 音游谱面 → osu! mania 转换台：O2Jam(.ojn/.ojm) 与 BMS(.bms/.bme/.bml/.bmx) 双模式，浏览器 UI（tab）+ 命令行（o2jam/bms/auto 子命令）；kernel(core) + 模式(modes) + 外壳(ui) 三层，共用唯一的 .osu 写出器、编码检测、混音与 .osz 打包",
+  "scripts": {
+    "start": "node tools/serve.js",
+    "serve": "node tools/serve.js",
+    "cli": "node tools/cli.js",
+    "cli:o2jam": "node tools/cli.js o2jam",
+    "cli:bms": "node tools/cli.js bms",
+    "bundle": "node tools/bundle.mjs",
+    "test": "node tools/test-suite.js",
+    "verify": "node tools/verify-osz.js",
+    "scan": "node tools/scan-shift.js",
+    "scan:keysound": "node tools/scan-keysound.js",
+    "scan:mix": "node tools/diag-mix.js",
+    "scan:audio": "node tools/scan-audio.js",
+    "scan:clip": "node tools/diag-clip.js",
+    "scan:missing": "node tools/scan-missing.js",
+    "diag:mp3perf": "node tools/diag-mp3-perf.js",
+    "diag:perf": "node tools/diag-perf.js",
+    "diag:ffmpeg": "node tools/diag-ffmpeg-batch.js",
+    "diag:ffmpegverify": "node tools/diag-ffmpeg-verify.js",
+    "diag:ffmpegapi": "node tools/diag-ffmpeg-api.js",
+    "diag:bigpost": "node tools/diag-big-post.js",
+    "diag:loudness": "node tools/diag-loudness.js"
+  },
+  "keywords": ["o2jam", "ojn", "ojm", "bms", "bme", "osu", "mania", "converter", "keysound"],
+  "license": "MIT",
+  "engines": { "node": ">=18" }
+}

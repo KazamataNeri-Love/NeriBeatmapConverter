@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SeriousBeatmapConverter · 音游谱面 → osu! 转换台</title>
+<style>
+  :root{
+    --bg:#12141c; --panel:#1b1e28; --panel2:#232734; --line:#323848;
+    --fg:#e6e9f2; --dim:#98a0b5; --accent:#4fc0ff; --ok:#4fffd5; --warn:#f6f05c; --err:#ff6b81;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:13px/1.55 "Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  header{padding:14px 20px;background:linear-gradient(90deg,#1a1f3a,#2a1440);
+         border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.3px}
+  header p{margin:3px 0 0;color:var(--dim);font-size:12px}
+  /* 模式 tab：单页多模式，共用编码器后端与日志 */
+  .modes{display:flex;gap:6px;padding:10px 20px 0;max-width:1500px;margin:0 auto;flex-wrap:wrap}
+  .mode-tab{background:var(--panel);border:1px solid var(--line);border-bottom:none;
+            border-radius:8px 8px 0 0;padding:8px 16px;font-size:12.5px;color:var(--dim);
+            cursor:pointer;position:relative;top:1px}
+  .mode-tab:hover:not(:disabled){color:var(--fg);border-color:#3f4a63}
+  .mode-tab.active{background:var(--panel);color:var(--accent);border-color:var(--line);
+                   box-shadow:inset 0 2px 0 var(--accent)}
+  .mode-tab:disabled{opacity:.45;cursor:not-allowed}
+  main{padding:14px 20px 40px;max-width:1500px;margin:0 auto}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+          padding:12px 14px;margin-bottom:12px}
+  section>h2{margin:0 0 9px;font-size:13px;color:var(--accent);font-weight:600}
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .grow{flex:1 1 auto;min-width:0}
+  button{background:var(--panel2);color:var(--fg);border:1px solid var(--line);
+         border-radius:6px;padding:7px 13px;cursor:pointer;font-size:12px}
+  button:hover:not(:disabled){border-color:var(--accent);color:#fff}
+  button:disabled{opacity:.42;cursor:not-allowed}
+  button.primary{background:#1e4f7a;border-color:#2f7eb8}
+  button.primary:hover:not(:disabled){background:#25618f}
+  input[type=text],input[type=number],select{background:#0f1119;color:var(--fg);
+         border:1px solid var(--line);border-radius:5px;padding:5px 7px;font-size:12px}
+  label.chk{display:inline-flex;gap:5px;align-items:center;cursor:pointer;font-size:12px}
+  #drop{border:2px dashed #3d4560;border-radius:8px;padding:22px;text-align:center;
+        color:var(--dim);transition:.15s}
+  #drop.hot{border-color:var(--accent);background:#16203a;color:var(--fg)}
+  .stat{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:8px}
+  .stat b{color:var(--fg);font-weight:600}
+  .scroll{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th{position:sticky;top:0;background:#1a1e2b;text-align:left;padding:6px 8px;
+     border-bottom:1px solid var(--line);font-weight:600;white-space:nowrap;z-index:1}
+  td{padding:4px 8px;border-bottom:1px solid #232734;vertical-align:middle}
+  tr:hover td{background:#20242f}
+  tr.sel td{background:#1d2c40}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--dim)}
+  td.diff{white-space:nowrap}
+  .badge{display:inline-block;padding:1px 6px;border-radius:9px;font-size:10.5px;
+         border:1px solid;line-height:1.5}
+  .b-ok{color:var(--ok);border-color:#2f6f63;background:#14302c}
+  .b-fix{color:var(--warn);border-color:#6f6a2f;background:#2f2d14}
+  .b-bad{color:var(--err);border-color:#6f2f3a;background:#301419}
+  .b-dim{color:var(--dim);border-color:var(--line)}
+  code,.mono{font-family:Consolas,"Cascadia Mono",monospace}
+  pre{margin:0;background:#0f1119;border:1px solid var(--line);border-radius:6px;
+      padding:9px;max-height:280px;overflow:auto;font-size:11.5px;color:#c9d1e4;white-space:pre}
+  .log{height:150px;overflow:auto;background:#0f1119;border:1px solid var(--line);
+       border-radius:6px;padding:8px;font-size:11.5px;font-family:Consolas,monospace;
+       white-space:pre-wrap;color:#b6bed3}
+  .log .e{color:var(--err)} .log .w{color:var(--warn)} .log .s{color:var(--ok)}
+  .hint{color:var(--dim);font-size:11.5px}
+  #bar{height:5px;background:#0f1119;border-radius:3px;overflow:hidden;margin-top:8px}
+  #bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4fc0ff,#4fffd5);
+         transition:width .12s}
+  details summary{cursor:pointer;color:var(--dim);font-size:12px}
+  details[open] summary{color:var(--accent);margin-bottom:6px}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  /* ①② 并列：等高（grid 默认 stretch）+ 左侧拖放区自动擑满剩余高度 */
+  .cols2.top{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:stretch;margin-bottom:12px}
+  .cols2.top>section{margin-bottom:0;min-width:0;display:flex;flex-direction:column}
+  #drop{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:10px}
+  /* ② 的选项按标签长度分行：短标签成行，长标签/长下拉自成一行并擑满 */
+  .opt{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+  .opt+.opt{margin-top:7px}
+  .opt label.chk{gap:5px;flex:0 1 auto;min-width:0}
+  .opt label.grow{flex:1 1 240px}
+  .opt select{flex:1 1 220px;min-width:0;max-width:100%}
+  .opt input[type=text],.opt input[type=number]{min-width:0}
+  .opt .hint{flex:1 1 100%;margin:0}
+  .opt .sep{flex:0 0 auto;color:var(--line)}
+  /* 模式专属选项块：只显示当前模式那一块，避免两套控件互相写 */
+  .mode-panel{display:none;border-top:1px dashed var(--line);margin-top:10px;padding-top:10px}
+  .mode-panel.active{display:block}
+  .mode-panel>.opt:first-child{margin-top:0}
+  .mode-title{font-size:11.5px;color:var(--dim);margin:0 0 6px}
+  /* 启动失败提示（典型：直接用 file:// 双击 index.html）*/
+  .boot-warn{position:sticky;top:0;z-index:50;margin:0;padding:12px 20px;
+             background:#3a1d22;border-bottom:1px solid #7a3340;color:#ffd9df;font-size:12.5px}
+  .boot-warn b{color:#fff}
+  .boot-warn code{background:#24131a;border:1px solid #6f2f3a;border-radius:4px;
+                  padding:1px 6px;color:#ffe9b0}
+  .boot-warn a{color:#7fd4ff}
+  .boot-warn ol{margin:6px 0 0;padding-left:20px}
+  .boot-warn .why{color:#e7a9b4;margin-top:6px;font-size:11.5px}
+  body.boot-failed .mode-tab{opacity:.45;cursor:not-allowed}
+  @media(max-width:980px){.cols2,.cols2.top{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>SeriousBeatmapConverter <span style="color:var(--dim);font-weight:400">· 音游谱面 → osu! 转换台 · 多模式</span></h1>
+  <p>一个页面里并排放多个来源：O2Jam（<code>.ojn</code>/<code>.ojm</code>）与 BMS（<code>.bms/.bme/.bml/.bmx</code>），
+     共用 .osu 写出器、编码检测、混音与打包。拖入文件后按扩展名自动分诊到对应模式。</p>
+</header>
+
+<nav id="modes" class="modes">
+  <button class="mode-tab active" data-mode="o2jam">O2Jam → osu!</button>
+  <button class="mode-tab" data-mode="bms">BMS → osu!</button>
+</nav>
+
+<main>
+  <div class="cols2 top">
+  <section>
+    <h2>① 选曲</h2>
+    <div id="drop">
+      <div style="font-size:14px">把 <b>谱面文件 / .zip 压缩包</b> 或整个歌曲文件夹拖到这里</div>
+      <div class="hint" id="dropHint">当前模式：O2Jam（.ojn + 同目录 .ojm）</div>
+      <div class="row" style="justify-content:center;gap:8px">
+        <button id="pickFiles">选择文件（可多选）</button>
+        <button id="pickDir">选择文件夹</button>
+        <button id="clearAll">清空</button>
+      </div>
+      <input type="file" id="fileInput" multiple accept=".ojn,.ojm,.bms,.bme,.bml,.bmx,.zip" hidden>
+      <input type="file" id="dirInput" webkitdirectory directory multiple hidden>
+    </div>
+    <div class="stat" id="loadStat"></div>
+  </section>
+
+  <section>
+    <h2>② 转谱细则</h2>
+
+    <div class="opt">
+      <label class="chk grow">音频 <select id="audioMode">
+        <option value="per-diff" selected>每难度单独混音（忠实原版，体积大）</option>
+        <option value="keysound">保留键音（不混音，音质原样，体积最小）</option>
+        <option value="shared">所有难度共享一份混音（省体积）</option>
+        <option value="none">不生成音频（只导 .osu）</option></select></label>
+      <label class="chk">采样率 <select id="rate" style="flex:0 0 auto">
+        <option value="44100" selected>44100</option>
+        <option value="22050">22050</option>
+        <option value="48000">48000</option></select> Hz</label>
+    </div>
+
+    <div class="opt">
+      <label class="chk">输出格式 <select id="audioFormat" style="flex:0 0 auto"></select></label>
+      <label class="chk" id="brWrap">码率 <select id="mp3Kbps" style="flex:0 0 auto"></select> kbps</label>
+      <label class="chk"><input type="checkbox" id="normalize" checked> 峰值归一化</label>
+      <label class="chk"><input type="checkbox" id="useFfmpeg" checked> 本地 ffmpeg 编码</label>
+    </div>
+    <div class="opt"><span class="hint" id="ffmpegState"></span></div>
+
+    <div class="opt">
+      <label class="chk">OD 覆盖 <input type="number" id="od" step="0.1" placeholder="按等级" style="width:76px"></label>
+      <label class="chk">HP <input type="number" id="hp" step="0.1" value="8.2" style="width:64px"></label>
+      <label class="chk"><input type="checkbox" id="zipPerSong" checked> 打包成 .osz</label>
+      <label class="chk">服务器 tag <input type="text" id="server" placeholder="如 9you" style="width:94px"></label>
+    </div>
+
+    <div class="opt">
+      <label class="chk grow">文本编码 <select id="encoding">
+        <option value="auto" selected>自动检测（推荐）</option>
+        <option value="gb18030">GBK / GB18030（O2Jam 实际用法，含日文）</option>
+        <option value="shift_jis">Shift-JIS（多数日系 BMS）</option>
+        <option value="euc-kr">EUC-KR / CP949（韩服）</option>
+        <option value="big5">Big5</option>
+        <option value="utf-8">UTF-8</option></select></label>
+    </div>
+
+    <div class="opt">
+      <label class="chk grow">标签 Tags <select id="tagMode">
+        <option value="keep" selected>保留原版</option>
+        <option value="append">在末尾追加自定义</option>
+        <option value="replace">只用自定义</option></select></label>
+      <label class="chk grow">内容 <input type="text" id="tagTemplate" placeholder="如 o2jam {server} {noter}" style="flex:1 1 200px"></label>
+    </div>
+    <div class="opt"><span class="hint" id="tagPreview"></span></div>
+    <p class="hint" style="margin:6px 0 0">
+      Tags 占位符：
+      <code>{noter}</code> 谱师、<code>{songid}</code> 编号、<code>{server}</code> 服务器、<code>{title}</code> 曲名、
+      <code>{artist}</code> 艺术家、<code>{diff}</code> 难度、<code>{level}</code> 等级、<code>{file}</code> 文件名。
+    </p>
+
+    <!-- ================= 模式专属选项 ================= -->
+    <div id="panel-o2jam" class="mode-panel active">
+      <p class="mode-title">O2Jam 专属</p>
+      <div class="opt">
+        <label class="chk">难度：
+          <label class="chk"><input type="checkbox" id="d0" checked> EX</label>
+          <label class="chk"><input type="checkbox" id="d1" checked> NX</label>
+          <label class="chk"><input type="checkbox" id="d2" checked> HX</label>
+        </label>
+        <label class="chk"><input type="checkbox" id="useSV"> 保留 SV（<code>--sv</code>）</label>
+        <label class="chk grow">难度后缀 <select id="suffixMode">
+          <option value="auto" selected>自动（与原版一致）</option>
+          <option value="all">三个都加后缀</option>
+          <option value="none">都不加</option></select></label>
+      </div>
+      <div class="opt">
+        <label class="chk">超长长条 <input type="number" id="lnMaxBeats" value="0" min="0" step="1" style="width:56px"> 拍（0=关）</label>
+        <label class="chk"><input type="checkbox" id="autoRepair" checked> 自动修复异常 Note</label>
+        <label class="chk"><input type="checkbox" id="sampleFallback" checked> 样本 id 兜底</label>
+      </div>
+      <div class="opt"><span class="hint">
+        未闭合/零长/反向长条一律补成 <b>1/2 拍</b> · 同刻重复音去重 · 长条中间夹音丢弃 · 负时间钓零；
+        关掉后未闭合长条降级成普通 Note（依旧保证能导入）
+      </span></div>
+    </div>
+
+    <div id="panel-bms" class="mode-panel">
+      <p class="mode-title">BMS 专属</p>
+      <div class="opt">
+        <label class="chk grow">皿（scratch）<select id="bmsPlate">
+          <option value="column" selected>占一列（1P 最左 / 2P 最右）</option>
+          <option value="sample">只当 Sample 事件播（能听不能打）</option>
+          <option value="drop">直接丢掉</option></select></label>
+        <label class="chk grow">键型 <select id="bmsKeys">
+          <option value="auto" selected>按谱面自动</option>
+          <option value="5">5K</option>
+          <option value="6">5K1S（5 键 + 单皿）</option>
+          <option value="7">7K</option>
+          <option value="8">7K1S（7 键 + 单皿）</option>
+          <option value="10">10K（双人 5+5）</option>
+          <option value="12">10K2S（双人 5+5 + 双皿）</option>
+          <option value="14">14K（双人 7+7）</option>
+          <option value="16">14K2S（双人 7+7 + 双皿）</option></select></label>
+      </div>
+      <div class="opt">
+        <label class="chk"><input type="checkbox" id="bmsLnfair" checked> 长音按拍补齐异常长度</label>
+        <label class="chk"><input type="checkbox" id="bmsStop" checked> 把 STOP 计入时间轴</label>
+        <label class="chk grow">随机分支 <select id="bmsRandom">
+          <option value="first" selected>取第一个分支</option>
+          <option value="1">固定第 1 组</option>
+          <option value="2">固定第 2 组</option></select></label>
+      </div>
+      <div class="opt"><span class="hint">
+        BMS 一首歌是一个文件夹（多个 <code>.bms</code> = 多个难度）；<code>#WAV</code> 找不到的样本不会丢音符，只静音并报警。<br>
+        键型看通道：<code>11-15</code> 五键、<code>18/19</code> 是第 6/7 键、<code>21-29</code> 是第二人；
+        <code>16</code> 左手皿、<code>26</code> 右手皿（双人谱里分别在最左、最右）。
+        自动判定：任一处用到 <code>18/19</code> 就按 7 键，一处都没有就按 5 键 ——
+        所以「其实是 7K、但这首歌全程没弹第 6/7 键」会被判成 5K，请在「键型」里手动指定 7K / 7K1S。
+      </span></div>
+    </div>
+  </section>
+  </div>
+
+  <section>
+    <h2>③ 谱面列表 <span class="hint" id="selInfo"></span></h2>
+    <div class="row" style="margin-bottom:8px">
+      <button id="selAll">全选可转换</button>
+      <button id="selNone">全不选</button>
+      <input type="text" id="filter" placeholder="过滤：曲名 / 艺术家 / 编号 / 谱师" style="flex:1 1 240px">
+    </div>
+    <div class="scroll"><table id="tbl">
+      <thead></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>④ 转换</h2>
+    <div class="row">
+      <button class="primary" id="go">开始转换选中谱面</button>
+      <span class="hint" id="goInfo">还没开始</span>
+    </div>
+    <div id="bar"><i></i></div>
+    <div class="row" style="margin-top:10px;align-items:flex-start">
+      <div class="grow">
+        <h2 style="margin-top:4px">日志</h2>
+        <div class="log" id="log"></div>
+      </div>
+      <div class="grow">
+        <h2 style="margin-top:4px">.osu 预览 <span class="hint" id="prevName"></span></h2>
+        <pre id="preview">点列表里某一首歌即可在这里预览生成的 .osu 头部。</pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <details>
+      <summary>说明：这是一个转换台（多模式），点开看分层与每个模式的口径</summary>
+      <div class="cols2">
+        <div>
+          <h2>分层</h2>
+          <pre>src/core/            与格式无关的 kernel
+  osu/writer.js      ★ 全项目唯一拼 .osu 的地方
+  audio.js           混音（audioObjects + samples → PCM）
+  encoders/          WAV / MP3(lamejs) / ffmpeg-http
+  keysound.js        保留键音（BMS 原生玩法）
+  text.js  zip.js  util.js  sampledur.js
+src/modes/o2jam/     OJN/OJM 解析 + EX/NX/HX + 异常修正
+src/modes/bms/       BMS 文本解析 + 拍/毫秒时间轴
+src/ui/shell.js      tab、共用选项、进度、日志、下载</pre>
+          <p class="hint">
+            模式只产出数据（timingPoints / hitObjects / audioObjects / meta），
+            由 kernel 统一写出 —— 两个模式不会各自长出一套「合法但不一样」的 .osu。
+          </p>
+        </div>
+        <div>
+          <h2>两种来源的差异</h2>
+          <ol class="hint" style="padding-left:18px">
+            <li><b>一首歌 = 什么</b>：O2Jam 是一个 <code>.ojn</code> 内含 EX/NX/HX 三段；
+                BMS 是一个文件夹里的多个 <code>.bms</code>，每个就是一个难度。</li>
+            <li><b>时间轴</b>：OJN 用 measure+position 直接累加；BMS 要处理 <code>#BPMxx</code>(03/08)、
+                <code>#STOP</code>(09) 与 <code>02</code> 小节长度 —— 已在测试里与 .NET 参考实现逐毫秒对齐。</li>
+            <li><b>样本</b>：OJN 在 <code>.ojm</code> 容器里；BMS 的 <code>#WAVxx</code> 指向磁盘文件，
+                缺文件只静音、<b>不丢音符</b>。</li>
+            <li><b>文本编码</b>：O2Jam 是 GBK 系（连日文也是 GBK）；日系 BMS 多为 Shift-JIS，
+                所以编码策略跟着模式走，共用同一个下拉框。</li>
+            <li><b>皿/键数</b>：BMS 7K 的第 8 个位置是皿，可摆成 8K 第 0 列，也可只当背景音播。</li>
+          </ol>
+        </div>
+      </div>
+    </details>
+  </section>
+</main>
+
+<script>
+/* 这段必须是「经典脚本」：ES 模块在 file:// 下会被 CORS 拦掉，那时连模块都进不来。
+   作用：整页模块没能启动时（最典型就是双击 index.html），把「静默失效」变成一句人话 ——
+   否则用户看到的只是「标签页点不动」，控制台里才有 CORS 报错。 */
+(function(){
+  var FLAG = '__MANIA_HUB_BOOTED';
+  var shown = false;
+  function show(){
+    if (shown || window[FLAG] || !document.body) return;
+    shown = true;
+    document.body.classList.add('boot-failed');
+    var bar = document.createElement('div');
+    bar.className = 'boot-warn';
+    bar.innerHTML =
+      '<b>页面脚本没有启动 —— 所以标签页、列表、转换按钮都点不动。</b><br>'
+      + '原因是浏览器对 <code>file://</code> 的限制：本项目的代码全部是 ES 模块，不允许从本地文件加载。'
+      + '<ol>'
+      + '<li>双击项目目录里的 <code>start.cmd</code>（或在项目目录执行 <code>npm start</code>）</li>'
+      + '<li>浏览器打开 <a href="http://localhost:5173/" target="_blank" rel="noreferrer">http://localhost:5173/</a></li>'
+      + '</ol>'
+      + '<div class="why">当前页面：' + location.href
+      + '　（换成 http:// 打开后，点「BMS → osu!」标签页就能切换了）</div>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    var tabs = document.querySelectorAll('.mode-tab');
+    for (var i = 0; i < tabs.length; i++){
+      tabs[i].disabled = true;
+      tabs[i].title = '需要先启动本地服务（start.cmd 或 npm start）';
+    }
+  }
+  // 模块被拦时浏览器会在 <script> 上触发 error（message 里含 CORS / import）
+  window.addEventListener('error', function(e){
+    var m = (e && e.message) || '';
+    if (/CORS|cross origin|import|module|script/i.test(m)) setTimeout(show, 0);
+  }, true);
+  // 兜底：一会儿还没启动就提示（file:// 下一定会走到这里）
+  setTimeout(show, 1200);
+  window.addEventListener('load', function(){ setTimeout(show, 300); });
+})();
+</script>
+<script src="./vendor/lamejs/lame.min.js"></script>
+<script type="module" src="./src/ui/shell.js"></script>
+</body>
+</html>

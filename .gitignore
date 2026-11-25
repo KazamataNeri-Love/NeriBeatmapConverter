@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output (rebuilt on demand via `npm run bundle`)
+dist/
+
+# Beatmap packages & large audio/archive assets (Golden rule: never commit big audio/packs)
+*.osz
+*.ojm
+*.ojn
+*.zip
+*.rar
+*.7z
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.m4a
+
+# Local reports, logs & temp outputs
+_report.json
+*.log
+tmp/
+out/
+.tmp/
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
