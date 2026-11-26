@@ -1,0 +1,309 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1050" width="1480" height="1050" role="img" aria-label="NeriBeatmapConverter 双闭环工程工作流矢量图">
+  <defs>
+    <style>
+      .font { font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Segoe UI", system-ui, sans-serif; }
+      .title { font-size: 23px; font-weight: 700; fill: #0F172A; }
+      .subtitle { font-size: 13px; fill: #475569; }
+      .zone-title { font-size: 14.5px; font-weight: 700; }
+      .card-hdr { font-size: 13.5px; font-weight: 700; fill: #FFFFFF; }
+      .card-sub { font-size: 12.5px; font-weight: 700; fill: #0F172A; }
+      .card-txt { font-size: 12px; fill: #334155; }
+      .pill-txt { font-size: 11.5px; font-weight: 700; }
+      .edge-lbl { font-size: 11px; font-weight: 700; }
+      .legend-txt { font-size: 11.5px; font-weight: 700; }
+    </style>
+
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.07"/>
+    </filter>
+
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#2563EB"/>
+    </marker>
+    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#059669"/>
+    </marker>
+    <marker id="arr-indigo" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#4F46E5"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#D97706"/>
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#7C3AED"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#DC2626"/>
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#64748B"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect x="0" y="0" width="1480" height="1050" fill="#F8FAFC"/>
+
+  <!-- Header -->
+  <text x="44" y="44" class="font title">NeriBeatmapConverter 双闭环工程工作流（Top-Down + Bottom-Up）</text>
+  <text x="44" y="68" class="font subtitle">核心原则：只约定跨会话边界契约 · 写审分离 · 常规单与日志归因全程 0 Gemini 消耗</text>
+
+  <!-- Legend Pills -->
+  <g transform="translate(744, 28)">
+    <rect x="0" y="0" width="166" height="28" rx="14" fill="#F3E8FF" stroke="#C4B5FD"/>
+    <text x="83" y="18" text-anchor="middle" class="font legend-txt" fill="#6D28D9">① Gemini（仅3类触发）</text>
+
+    <rect x="176" y="0" width="174" height="28" rx="14" fill="#DBEAFE" stroke="#93C5FD"/>
+    <text x="263" y="18" text-anchor="middle" class="font legend-txt" fill="#1D4ED8">②-A/B GPT（双窗隔离）</text>
+
+    <rect x="360" y="0" width="174" height="28" rx="14" fill="#D1FAE5" stroke="#6EE7B7"/>
+    <text x="447" y="18" text-anchor="middle" class="font legend-txt" fill="#047857">③ DeepSeek（侦察/施工）</text>
+
+    <rect x="544" y="0" width="136" height="28" rx="14" fill="#FEF3C7" stroke="#FCD34D"/>
+    <text x="612" y="18" text-anchor="middle" class="font legend-txt" fill="#B45309">人类死线：批准合并</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- ZONE A: TOP-DOWN MAIN PIPELINE                                        -->
+  <!-- ===================================================================== -->
+  <rect x="44" y="114" width="1380" height="312" rx="14" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5"/>
+  <text x="64" y="142" class="font zone-title" fill="#1E3A8A">A. 自上而下主干（Top-Down：需求规划 → 刚性拆单 → 白名单施工 → 纯 diff 盲审 → 人类放行）</text>
+
+  <!-- Card T1 -->
+  <g filter="url(#shadow)">
+    <rect x="62" y="160" width="236" height="172" rx="10" fill="#FFFFFF" stroke="#93C5FD" stroke-width="1.5"/>
+    <path d="M 62 170 Q 62 160 72 160 L 288 160 Q 298 160 298 170 L 298 192 L 62 192 Z" fill="#2563EB"/>
+    <text x="180" y="181" text-anchor="middle" class="font card-hdr">②-A GPT 日常总管（A窗）</text>
+    <text x="76" y="213" class="font card-sub">规划与刚性拆单（0 Gemini）</text>
+    <text x="76" y="235" class="font card-txt">• 维护 docs/ROADMAP.md</text>
+    <text x="76" y="255" class="font card-txt">• 校验白名单互斥（WIP ≤ 2）</text>
+    <text x="76" y="275" class="font card-txt">• 写死前置依赖/Non-Goals/样板</text>
+    <rect x="74" y="292" width="212" height="28" rx="6" fill="#DBEAFE"/>
+    <text x="180" y="310" text-anchor="middle" class="font pill-txt" fill="#1D4ED8">出窗契约：正式 Issue</text>
+  </g>
+
+  <!-- Arrow T1 -> T2 -->
+  <line x1="298" y1="246" x2="334" y2="246" stroke="#2563EB" stroke-width="2.2" marker-end="url(#arr-blue)"/>
+  <text x="316" y="236" text-anchor="middle" class="font edge-lbl" fill="#1D4ED8">契约</text>
+
+  <!-- Card T2 -->
+  <g filter="url(#shadow)">
+    <rect x="338" y="160" width="244" height="172" rx="10" fill="#FFFFFF" stroke="#6EE7B7" stroke-width="1.5"/>
+    <path d="M 338 170 Q 338 160 348 160 L 572 160 Q 582 160 582 170 L 582 192 L 338 192 Z" fill="#059669"/>
+    <text x="460" y="181" text-anchor="middle" class="font card-hdr">③-施工 DeepSeek（1单1窗）</text>
+    <text x="352" y="213" class="font card-sub">白名单内施工与自测（0 Gemini）</text>
+    <text x="352" y="235" class="font card-txt">• 仅改白名单文件、按样板实现</text>
+    <text x="352" y="255" class="font card-txt">• 跑通 npm test 等验收命令</text>
+    <text x="352" y="275" class="font card-txt">• 本地 git commit 即止（禁 push）</text>
+    <rect x="350" y="292" width="220" height="28" rx="6" fill="#D1FAE5"/>
+    <text x="460" y="310" text-anchor="middle" class="font pill-txt" fill="#047857">出窗契约：4 行交接单</text>
+  </g>
+
+  <!-- Arrow T2 -> T3 -->
+  <line x1="582" y1="246" x2="622" y2="246" stroke="#059669" stroke-width="2.2" marker-end="url(#arr-emerald)"/>
+  <text x="602" y="236" text-anchor="middle" class="font edge-lbl" fill="#047857">仅 diff</text>
+
+  <!-- Card T3 -->
+  <g filter="url(#shadow)">
+    <rect x="626" y="160" width="248" height="172" rx="10" fill="#FFFFFF" stroke="#A5B4FC" stroke-width="1.5"/>
+    <path d="M 626 170 Q 626 160 636 160 L 864 160 Q 874 160 874 170 L 874 192 L 626 192 Z" fill="#4F46E5"/>
+    <text x="750" y="181" text-anchor="middle" class="font card-hdr">②-B GPT 独立盲审（B窗）</text>
+    <text x="640" y="213" class="font card-sub">1 轮纯 diff 盲审（隔离 A/施工窗）</text>
+    <text x="640" y="235" class="font card-txt">• 红线1：精度 / 编码 / 不丢音符</text>
+    <text x="640" y="255" class="font card-txt">• 红线2：白名单与跨格式隔离</text>
+    <text x="640" y="275" class="font card-txt">• 红线3：确定性与 Golden 回归</text>
+    <rect x="638" y="292" width="224" height="28" rx="6" fill="#E0E7FF"/>
+    <text x="750" y="310" text-anchor="middle" class="font pill-txt" fill="#3730A3">出窗契约：4 行人话盲审卡</text>
+  </g>
+
+  <!-- Arrow T3 -> T4 -->
+  <line x1="874" y1="246" x2="912" y2="246" stroke="#4F46E5" stroke-width="2.2" marker-end="url(#arr-indigo)"/>
+  <text x="893" y="236" text-anchor="middle" class="font edge-lbl" fill="#3730A3">未 push</text>
+
+  <!-- Card T4 -->
+  <g filter="url(#shadow)">
+    <rect x="916" y="160" width="206" height="172" rx="10" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2"/>
+    <path d="M 916 170 Q 916 160 926 160 L 1112 160 Q 1122 160 1122 170 L 1122 192 L 916 192 Z" fill="#D97706"/>
+    <text x="1019" y="181" text-anchor="middle" class="font card-hdr">人类拍板（硬门禁）</text>
+    <text x="930" y="213" class="font card-sub" fill="#92400E">唯一放行开关（不可绕过）</text>
+    <text x="930" y="235" class="font card-txt">• 审阅 4 行人话盲审卡</text>
+    <text x="930" y="255" class="font card-txt">• 明确回复「批准合并」</text>
+    <text x="930" y="275" class="font card-txt">• 或指示打回重做原因</text>
+    <rect x="928" y="292" width="182" height="28" rx="6" fill="#FEF3C7" stroke="#FCD34D"/>
+    <text x="1019" y="310" text-anchor="middle" class="font pill-txt" fill="#92400E">口令：「批准合并」</text>
+  </g>
+
+  <!-- Arrow T4 -> T5 -->
+  <line x1="1122" y1="246" x2="1162" y2="246" stroke="#D97706" stroke-width="2.2" marker-end="url(#arr-amber)"/>
+  <text x="1142" y="236" text-anchor="middle" class="font edge-lbl" fill="#B45309">放行</text>
+
+  <!-- Card T5 -->
+  <g filter="url(#shadow)">
+    <rect x="1166" y="160" width="238" height="172" rx="10" fill="#FFFFFF" stroke="#A5B4FC" stroke-width="1.5"/>
+    <path d="M 1166 170 Q 1166 160 1176 160 L 1394 160 Q 1404 160 1404 170 L 1404 192 L 1166 192 Z" fill="#4F46E5"/>
+    <text x="1285" y="181" text-anchor="middle" class="font card-hdr">②-B GPT 收口发版</text>
+    <text x="1180" y="213" class="font card-sub">合入 main 与更新台账</text>
+    <text x="1180" y="235" class="font card-txt">• git push / 建 PR / 合并关单</text>
+    <text x="1180" y="255" class="font card-txt">• 顺手勾选 docs/ROADMAP.md</text>
+    <text x="1180" y="275" class="font card-txt">• 释放后继 blocked 依赖单</text>
+    <rect x="1178" y="292" width="214" height="28" rx="6" fill="#E0E7FF"/>
+    <text x="1285" y="310" text-anchor="middle" class="font pill-txt" fill="#3730A3">结果：干净 main 基线</text>
+  </g>
+
+  <!-- Zone A Bottom Callouts & Reject Loop -->
+  <!-- Escalation Callout (Left) -->
+  <rect x="62" y="352" width="356" height="56" rx="8" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="76" y="374" class="font pill-txt" fill="#6D28D9">升级门禁：仅「换版总规划 / 动 src/core 契约」时</text>
+  <text x="76" y="394" class="font card-txt" fill="#5B21B6">由 ②-A 压成 ≤30 行诊断包，上报 C 层 ① Gemini 拍板</text>
+
+  <!-- Reject Arrow T3 -> T2 -->
+  <path d="M 750 332 L 750 380 L 460 380 L 460 336" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr-red)"/>
+  <rect x="515" y="366" width="180" height="26" rx="13" fill="#FEF2F2" stroke="#FCA5A5"/>
+  <text x="605" y="383" text-anchor="middle" class="font edge-lbl" fill="#B91C1C">触碰 3 红线 → 打回重做</text>
+
+  <!-- Hard Guardrail Box (Right) -->
+  <rect x="916" y="352" width="488" height="56" rx="8" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="930" y="374" class="font pill-txt" fill="#3730A3">硬性死线：未获「批准合并」前严禁 push / 建 PR / 合并 / 关单</text>
+  <text x="930" y="394" class="font card-txt" fill="#4338CA">防撞车：白名单有交集（尤其 src/core/）强制串行，后单标 blocked</text>
+
+  <!-- ===================================================================== -->
+  <!-- ZONE B: BOTTOM-UP LOG ATTRIBUTION & TRIAGE LOOP                       -->
+  <!-- ===================================================================== -->
+  <rect x="44" y="446" width="1380" height="308" rx="14" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.5"/>
+  <text x="64" y="474" class="font zone-title" fill="#065F46">B. 自下而上回路（Bottom-Up：原始 Log / 报错 → 底层洗日志归因 → 分诊入队，严禁原始大日志直喂 Gemini）</text>
+
+  <!-- Card B1 -->
+  <g filter="url(#shadow)">
+    <rect x="62" y="492" width="252" height="172" rx="10" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.5"/>
+    <path d="M 62 502 Q 62 492 72 492 L 304 492 Q 314 492 314 502 L 314 524 L 62 524 Z" fill="#334155"/>
+    <text x="188" y="513" text-anchor="middle" class="font card-hdr">底层异常现场（多源输入）</text>
+    <text x="76" y="545" class="font card-sub">实跑与测试暴露的原始信号</text>
+    <text x="76" y="567" class="font card-txt">• 批转 _report.json 警告 / 错误</text>
+    <text x="76" y="587" class="font card-txt">• CLI / 浏览器报错堆栈日志</text>
+    <text x="76" y="607" class="font card-txt">• verify-osz 失败 / osu! 拒导</text>
+    <rect x="74" y="624" width="228" height="28" rx="6" fill="#F1F5F9"/>
+    <text x="188" y="642" text-anchor="middle" class="font pill-txt" fill="#334155">含 ③-施工窗发现的单外 log 异常</text>
+  </g>
+
+  <!-- Arrow B1 -> B2 -->
+  <line x1="314" y1="578" x2="354" y2="578" stroke="#64748B" stroke-width="2.2" marker-end="url(#arr-slate)"/>
+  <text x="334" y="568" text-anchor="middle" class="font edge-lbl" fill="#475569">原始log</text>
+
+  <!-- Card B2 -->
+  <g filter="url(#shadow)">
+    <rect x="358" y="492" width="274" height="172" rx="10" fill="#FFFFFF" stroke="#6EE7B7" stroke-width="1.5"/>
+    <path d="M 358 502 Q 358 492 368 492 L 622 492 Q 632 492 632 502 L 632 524 L 358 524 Z" fill="#059669"/>
+    <text x="495" y="513" text-anchor="middle" class="font card-hdr">③-侦察 DeepSeek（只读新窗）</text>
+    <text x="372" y="545" class="font card-sub">洗日志 · 去重聚簇 · 定位根因（0 Gemini）</text>
+    <text x="372" y="567" class="font card-txt">• 严格只读，绝不修改任何代码</text>
+    <text x="372" y="587" class="font card-txt">• 定向查证源码与 [只读] _references/</text>
+    <text x="372" y="607" class="font card-txt">• 提炼极小纯文本复现（禁塞大曲包）</text>
+    <rect x="370" y="624" width="250" height="28" rx="6" fill="#D1FAE5"/>
+    <text x="495" y="642" text-anchor="middle" class="font pill-txt" fill="#047857">出窗契约：4 行日志归因卡</text>
+  </g>
+
+  <!-- Arrow B2 -> B3 -->
+  <line x1="632" y1="578" x2="674" y2="578" stroke="#059669" stroke-width="2.2" marker-end="url(#arr-emerald)"/>
+  <text x="653" y="568" text-anchor="middle" class="font edge-lbl" fill="#047857">归因卡</text>
+
+  <!-- Card B3 -->
+  <g filter="url(#shadow)">
+    <rect x="678" y="492" width="248" height="172" rx="10" fill="#FFFFFF" stroke="#93C5FD" stroke-width="1.5"/>
+    <path d="M 678 502 Q 678 492 688 492 L 916 492 Q 926 492 926 502 L 926 524 L 678 524 Z" fill="#2563EB"/>
+    <text x="802" y="513" text-anchor="middle" class="font card-hdr">②-A GPT 分诊定级（A窗）</text>
+    <text x="692" y="545" class="font card-sub">按影响范围分流处置（0 Gemini）</text>
+    <text x="692" y="567" class="font card-txt">• 区分环境噪声 / 单模式 / 核心契约</text>
+    <text x="692" y="587" class="font card-txt">• 核对 ROADMAP 依赖与排期次序</text>
+    <text x="692" y="607" class="font card-txt">• 根治“想一出是一出”乱插队</text>
+    <rect x="690" y="624" width="224" height="28" rx="6" fill="#DBEAFE"/>
+    <text x="802" y="642" text-anchor="middle" class="font pill-txt" fill="#1D4ED8">产出：3 路分流决策</text>
+  </g>
+
+  <!-- Fan-out connectors from B3 to 3 Branches -->
+  <path d="M 926 578 L 950 578 L 950 516 L 970 516" fill="none" stroke="#64748B" stroke-width="2" marker-end="url(#arr-slate)"/>
+  <line x1="926" y1="578" x2="970" y2="578" stroke="#2563EB" stroke-width="2.4" marker-end="url(#arr-blue)"/>
+  <path d="M 926 578 L 950 578 L 950 644 L 970 644" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arr-purple)"/>
+
+  <!-- Branch 1: Noise -->
+  <rect x="974" y="492" width="430" height="48" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"/>
+  <text x="988" y="512" class="font pill-txt" fill="#334155">路径 1 · 纯源曲包损坏 / 缺 ffmpeg 等环境噪声</text>
+  <text x="988" y="530" class="font card-txt" fill="#475569">→ 归档说明，不建代码单（或仅补报错提示文案）</text>
+
+  <!-- Branch 2: Single-mode Fix -->
+  <rect x="974" y="550" width="430" height="56" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.8"/>
+  <text x="988" y="572" class="font pill-txt" fill="#1E40AF">路径 2 · 单模式常规 Bug（仅动 o2jam 或 bms）</text>
+  <text x="988" y="592" class="font card-txt" fill="#1D4ED8">→ 按契约建 fix Issue 入 ROADMAP，回流 A. 自上而下主干</text>
+
+  <!-- Branch 3: Core Contract Escalation -->
+  <rect x="974" y="616" width="430" height="56" rx="8" fill="#F3E8FF" stroke="#7C3AED" stroke-width="1.8" stroke-dasharray="5 3"/>
+  <text x="988" y="638" class="font pill-txt" fill="#6D28D9">路径 3 · 触碰 src/core 契约或跨模式系统性缺陷</text>
+  <text x="988" y="658" class="font card-txt" fill="#5B21B6">→ 压成 ≤30 行诊断包，上报 C 层 ① Gemini 拍板 ADR/边界</text>
+
+  <!-- Zone B Bottom Guardrail Strip (aligned neatly under B1..B3) -->
+  <rect x="62" y="684" width="864" height="50" rx="8" fill="#FFF7ED" stroke="#FDBA74" stroke-width="1.5"/>
+  <text x="76" y="705" class="font pill-txt" fill="#9A3412">施工期“单外异常”铁律（防顺手越界破坏顺序）：</text>
+  <text x="76" y="724" class="font card-txt" fill="#7C2D12">③-施工窗若在 log 中发现与当前 Issue 无关的 Bug，严禁顺手改白名单外文件，只写入「4 行交接单」第 4 行回流 ②-A 分诊。</text>
+
+  <!-- ===================================================================== -->
+  <!-- ZONE C: GEMINI CHIEF ARCHITECT & CIRCUIT BREAKER LAYER                -->
+  <!-- ===================================================================== -->
+  <rect x="44" y="776" width="1380" height="252" rx="14" fill="#F5F3FF" stroke="#DDD6FE" stroke-width="1.5"/>
+  <text x="64" y="804" class="font zone-title" fill="#4C1D95">C. ① Gemini 首席架构顾问（极低频出诊层：仅 3 类高杠杆触发 · 读极简 md + ≤30 行诊断包 · 用完即关）</text>
+
+  <!-- Card G1 -->
+  <g filter="url(#shadow)">
+    <rect x="62" y="822" width="424" height="184" rx="10" fill="#FFFFFF" stroke="#C4B5FD" stroke-width="1.5"/>
+    <path d="M 62 832 Q 62 822 72 822 L 476 822 Q 486 822 486 832 L 486 854 L 62 854 Z" fill="#7C3AED"/>
+    <text x="274" y="843" text-anchor="middle" class="font card-hdr">触发 1 · 换版总规划（按批决策）</text>
+    <text x="78" y="878" class="font card-sub">每版本（如 v0.4 → v0.5）仅集中唤醒 1 次</text>
+    <text x="78" y="902" class="font card-txt">• 审批下阶段核心目标、批次依赖顺序与 ADR 增补</text>
+    <text x="78" y="924" class="font card-txt">• 产出新版 docs/ROADMAP.md 骨架，日常交由 ②-A 推进</text>
+    <text x="78" y="946" class="font card-txt">• 严禁为单张常规小单零敲碎打唤醒 Gemini</text>
+    <rect x="76" y="964" width="396" height="28" rx="6" fill="#F3E8FF"/>
+    <text x="274" y="982" text-anchor="middle" class="font pill-txt" fill="#6D28D9">纠错机制：直接改 ROADMAP.md 升修订号换版</text>
+  </g>
+
+  <!-- Card G2 -->
+  <g filter="url(#shadow)">
+    <rect x="522" y="822" width="424" height="184" rx="10" fill="#FFFFFF" stroke="#C4B5FD" stroke-width="1.5"/>
+    <path d="M 522 832 Q 522 822 532 822 L 936 822 Q 946 822 946 832 L 946 854 L 522 854 Z" fill="#7C3AED"/>
+    <text x="734" y="843" text-anchor="middle" class="font card-hdr">触发 2 · 核心契约变更审批</text>
+    <text x="538" y="878" class="font card-sub">改动公共内核与跨模式接口前的硬审批</text>
+    <text x="538" y="902" class="font card-txt">• 动 src/core/ 公共 IR 或唯一 writer.js 前必经 ① 拍板</text>
+    <text x="538" y="924" class="font card-txt">• 抽象公共装配层或新增全新音游格式时定边界</text>
+    <text x="538" y="946" class="font card-txt">• 产出 ADR 决策条目 + 严格文件白名单与测试门禁</text>
+    <rect x="536" y="964" width="396" height="28" rx="6" fill="#F3E8FF"/>
+    <text x="734" y="982" text-anchor="middle" class="font pill-txt" fill="#6D28D9">架构红线：守住 Parser → 统一 IR → Emitter 解耦</text>
+  </g>
+
+  <!-- Card G3 -->
+  <g filter="url(#shadow)">
+    <rect x="982" y="822" width="422" height="184" rx="10" fill="#FFFFFF" stroke="#FDA4AF" stroke-width="1.5"/>
+    <path d="M 982 832 Q 982 822 992 822 L 1394 822 Q 1404 822 1404 832 L 1404 854 L 982 854 Z" fill="#E11D48"/>
+    <text x="1193" y="843" text-anchor="middle" class="font card-hdr">触发 3 · 突发事故 3 步熔断急救</text>
+    <text x="998" y="878" class="font card-sub">开发次序混乱 / 改串 / 回归炸裂时启用</text>
+    <text x="998" y="902" class="font card-txt">1. 立刻冻结新开施工窗，严禁在原窗继续叠补丁</text>
+    <text x="998" y="924" class="font card-txt">2. 由 ②-A / ③-侦察压出 ≤30 行精简诊断包</text>
+    <text x="998" y="946" class="font card-txt">3. ① 裁定：回滚 / 拆前置修复单 / 重排 ROADMAP</text>
+    <rect x="996" y="964" width="394" height="28" rx="6" fill="#FFE4E6"/>
+    <text x="1193" y="982" text-anchor="middle" class="font pill-txt" fill="#BE123C">省额度铁律：不养超长常驻窗，按需开新窗</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- CROSS-ZONE CONNECTORS (Unobstructed Dedicated Margin Lanes)           -->
+  <!-- ===================================================================== -->
+
+  <!-- 1. Right Lane: Branch 2 (Bottom-Up Fix) -> Top Corridor -> Card T1 -->
+  <path d="M 1404 578 L 1452 578 L 1452 94 L 180 94 L 180 156" fill="none" stroke="#2563EB" stroke-width="2.6" marker-end="url(#arr-blue)"/>
+  <rect x="756" y="82" width="268" height="24" rx="12" fill="#2563EB"/>
+  <text x="890" y="98" text-anchor="middle" class="font edge-lbl" fill="#FFFFFF">↑ 自下而上回流：建 fix Issue 排入主干</text>
+
+  <!-- 2. Direct Vertical Drop: Branch 3 (Core Escalation) -> Zone C -->
+  <line x1="1193" y1="672" x2="1193" y2="772" stroke="#7C3AED" stroke-width="2.4" stroke-dasharray="6 4" marker-end="url(#arr-purple)"/>
+  <rect x="1095" y="706" width="196" height="26" rx="13" fill="#F3E8FF" stroke="#7C3AED"/>
+  <text x="1193" y="723" text-anchor="middle" class="font edge-lbl" fill="#6D28D9">≤30 行诊断包上报 ① 拍板</text>
+
+  <!-- 3. Left Margin Lane: Zone A Escalation Callout -> Zone C -->
+  <path d="M 62 380 L 20 380 L 20 914 L 58 914" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-dasharray="6 4" marker-end="url(#arr-purple)"/>
+  <rect x="7" y="566" width="26" height="176" rx="13" fill="#F3E8FF" stroke="#C4B5FD"/>
+  <text x="20" y="654" text-anchor="middle" class="font edge-lbl" fill="#6D28D9" transform="rotate(-90 20 654)">换版 / 核心契约上报 ①</text>
+</svg>
